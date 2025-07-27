@@ -29,10 +29,10 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -b update-runrepeat-shoes
+          git checkout -B update-runrepeat-shoes
           git add runrepeat-shoes.json
           git commit -m "Weekly update: runrepeat shoes" || echo "No changes to commit"
-          git push origin update-runrepeat-shoes
+          git push origin update-runrepeat-shoes --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
