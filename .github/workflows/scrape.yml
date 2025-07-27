@@ -36,7 +36,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Check for Changes
+        id: changes
+        run: |
+          git diff --exit-code || echo "Changes detected"
+
       - name: Create Pull Request
+        if: steps.changes.outcome == 'success'
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
