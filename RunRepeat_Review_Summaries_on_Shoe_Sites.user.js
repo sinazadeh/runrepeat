@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RunRepeat Review Summaries on Shoe Sites
 // @namespace    https://github.com/sinazadeh/userscripts
-// @version      1.1.5
+// @version      1.1.6
 // @description  Injects RunRepeat reviews onto product pages of major shoe brands.
 // @author       You
 // @match        https://www.adidas.com/*
@@ -29,14 +29,20 @@
   const siteConfigs = {
     "www.adidas.com": {
       brand: "adidas",
-      getSlug: () =>
-        document
-          .querySelector('h1[data-testid="product-title"]')
-          ?.textContent.trim()
+      getSlug: () => {
+        const el = document.querySelector('h1[data-testid="product-title"]');
+        if (!el) return null;
+        let productName = el.textContent
+          .trim()
           .toLowerCase()
-          .replace(/\s+/g, "-") ||
-        window.location.pathname.split("/").filter(Boolean)[1]?.toLowerCase() ||
-        null,
+          .replace(/\s+/g, "-")
+          .replace(/[^a-z0-9-]/g, ""); // Remove special characters
+        productName = productName.replace(
+          /-(training|golf|running|basketball)?-shoes$/,
+          ""
+        ); // Remove specific suffixes
+        return `adidas-${productName}`; // Prepend the brand name to the slug
+      },
       injectionTarget: '[data-testid="buy-section"], .product-description',
       injectionMethod: "after",
     },
@@ -71,7 +77,11 @@
         if (!el) return null;
         const clone = el.cloneNode(true);
         clone.querySelectorAll("span").forEach((span) => span.remove());
-        return clone.textContent.trim().toLowerCase().replace(/\s+/g, "-");
+        const productName = clone.textContent
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, "-");
+        return `on-${productName}`; // Prepend the brand name to the slug
       },
       injectionTarget: '[data-test-id="cartButton"]',
       injectionMethod: "after",
@@ -108,9 +118,12 @@
   function generateRunRepeatURLs(slug, brand) {
     if (!slug) return [];
     const cleanSlug = slug.replace(/-shoes$/, "");
+    const baseSlug = slug.startsWith(`${brand}-`)
+      ? cleanSlug
+      : `${brand}-${cleanSlug}`; // Avoid double brand name
     return [
-      `https://runrepeat.com/${brand}-${cleanSlug}`,
-      `https://runrepeat.com/${brand}-${slug}`,
+      `https://runrepeat.com/${baseSlug}`,
+      `https://runrepeat.com/${baseSlug}-shoes`,
     ];
   }
 
@@ -133,10 +146,34 @@
     });
   }
 
+  function findMatchingShoe(brand, slug) {
+    if (!shoeDatabase) return null;
+    console.log("[RunRepeat] Searching for slug:", slug);
+    const match = shoeDatabase.find((shoe) => {
+      return shoe.brand === brand && shoe.name === slug;
+    });
+    if (match) {
+      console.log("[RunRepeat] Found match in database for slug:", slug);
+    } else {
+      console.log("[RunRepeat] No match found in database for slug:", slug);
+    }
+    return match;
+  }
+
   async function findValidRunRepeatPage(slug, brand) {
     const urls = generateRunRepeatURLs(slug, brand);
+    console.log("[RunRepeat] Trying to match URLs:", urls);
     const results = await Promise.all(urls.map(fetchAndParseRunRepeat));
-    return results.find(Boolean) || null;
+    const validPage = results.find(Boolean);
+    if (validPage) {
+      console.log(
+        "[RunRepeat] Found valid RunRepeat page for URL:",
+        validPage.url
+      );
+    } else {
+      console.log("[RunRepeat] No valid RunRepeat page found for URLs:", urls);
+    }
+    return validPage || null;
   }
 
   function parseRunRepeat(doc) {
@@ -216,15 +253,8 @@
     }
   }
 
-  function findMatchingShoe(brand, slug) {
-    if (!shoeDatabase) return null;
-    return shoeDatabase.find(
-      (shoe) => shoe.brand === brand && shoe.name === slug
-    );
-  }
-
   async function injectReviewSection() {
-    if (hasFailed) return;
+    if (hasFailed || reviewData) return; // Stop if already matched or failed
 
     currentConfig = siteConfigs[window.location.hostname];
     if (!currentConfig) return;
@@ -239,18 +269,42 @@
     const matchingShoe = findMatchingShoe(currentConfig.brand, currentSlug);
 
     if (matchingShoe) {
-      console.log("Matched using database:", matchingShoe);
-      reviewData = {
-        url: matchingShoe.url,
-        title: matchingShoe.title,
-      };
+      console.log("[RunRepeat] Matched using database:", matchingShoe);
+      const fetchedData = await fetchAndParseRunRepeat(matchingShoe.url);
+      if (fetchedData) {
+        console.log(
+          "[RunRepeat] Successfully fetched review data from database URL:",
+          matchingShoe.url
+        );
+        reviewData = fetchedData;
+      } else {
+        console.log(
+          "[RunRepeat] Failed to fetch review data from database URL:",
+          matchingShoe.url
+        );
+        reviewData = {
+          url: matchingShoe.url,
+          title: matchingShoe.title,
+        };
+      }
     } else if (!reviewData && !isFetching) {
-      console.log("No match in database, attempting URL matching...");
+      console.log(
+        "[RunRepeat] No match in database, attempting URL matching..."
+      );
       isFetching = true;
       reviewData =
         (await findValidRunRepeatPage(currentSlug, currentConfig.brand)) ||
         "failed";
       isFetching = false;
+
+      if (reviewData !== "failed") {
+        console.log(
+          "[RunRepeat] Successfully matched using URL:",
+          reviewData.url
+        );
+      } else {
+        console.log("[RunRepeat] URL matching failed.");
+      }
     }
 
     if (reviewData === "failed") {
