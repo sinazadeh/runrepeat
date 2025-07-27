@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RunRepeat Review Summaries on Shoe Sites
 // @namespace    https://github.com/sinazadeh/userscripts
-// @version      1.1.6
+// @version      1.1.7
 // @description  Injects RunRepeat reviews onto product pages of major shoe brands.
 // @author       You
 // @match        https://www.adidas.com/*
@@ -151,10 +151,15 @@
     console.log("[RunRepeat] Searching for slug:", slug);
 
     // Normalize the slug by removing terms like 'shoes', 'running shoes', etc.
-    const normalizedSlug = slug.replace(
+    let normalizedSlug = slug.replace(
       /-(shoes|running-shoes|training-shoes|basketball-shoes)$/i,
       ""
     );
+
+    // Additional normalization for 'new-balance'
+    if (brand === "new-balance") {
+      normalizedSlug = normalizedSlug.replace(/^fuel-cell-/, "fuelcell-");
+    }
 
     const match = shoeDatabase.find((shoe) => {
       return shoe.brand === brand && shoe.name === normalizedSlug;
