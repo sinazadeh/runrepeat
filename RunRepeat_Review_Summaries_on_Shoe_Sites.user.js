@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RunRepeat Review Summaries on Shoe Sites
 // @namespace    https://github.com/sinazadeh/userscripts
-// @version      1.1.1
+// @version      1.1.2
 // @description  Injects RunRepeat reviews onto product pages of major shoe brands.
 // @author       You
 // @match        https://www.adidas.com/*
@@ -125,7 +125,6 @@
             "text/html"
           );
           if (!doc.querySelector("#product-intro")) return resolve(null);
-          console.log(`[RR Injector] SUCCESS: Found data at ${url}`);
           resolve({ ...parseRunRepeat(doc), url });
         },
         onerror: () => resolve(null),
@@ -202,28 +201,6 @@
     return `<div style="background:white; padding:20px; border-radius:8px; border-top:4px solid ${color}; box-shadow:0 2px 4px rgba(0,0,0,0.05); margin-bottom:16px;"><h4 style="margin:0 0 16px 0; font-size:16px; color:${color}; font-weight:600;">${title}</h4><ul style="margin:0; padding:0; list-style:none; color:#333;">${items.map((item) => `<li style="font-size:14px; line-height:1.5; margin-bottom:10px; padding-left:20px; position:relative;"><span style="position:absolute; left:0; top:1px; color:${color};">${color === "#28a745" ? "✔" : "✘"}</span>${item}</li>`).join("")}</ul></div>`;
   }
 
-  async function fetchDatabase() {
-    const url =
-      "https://raw.githubusercontent.com/sinazadeh/runrepeat/refs/heads/main/runrepeat-shoes.json";
-    try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error("Failed to fetch database");
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching database:", error);
-      return [];
-    }
-  }
-
-  async function findMatchByTitle(title) {
-    const database = await fetchDatabase();
-    return (
-      database.find(
-        (entry) => entry.title.toLowerCase() === title.toLowerCase()
-      ) || null
-    );
-  }
-
   async function injectReviewSection() {
     if (hasFailed) return;
 
@@ -231,9 +208,7 @@
     if (!currentConfig) return;
 
     currentSlug = currentConfig.getSlug();
-    const pageTitle = document.querySelector("title")?.textContent.trim();
-
-    if (!currentSlug && !pageTitle) {
+    if (!currentSlug) {
       setTimeout(injectReviewSection, 500);
       return;
     }
@@ -241,7 +216,6 @@
     if (!reviewData && !isFetching) {
       isFetching = true;
       reviewData =
-        (await findMatchByTitle(pageTitle)) ||
         (await findValidRunRepeatPage(currentSlug, currentConfig.brand)) ||
         "failed";
       isFetching = false;

@@ -94,16 +94,12 @@ async function buildDatabase() {
   }
 
   const uniqueUrls = [...new Set(allUrls)];
-  console.log(`Found ${uniqueUrls.length} unique URLs.`);
-
-  // For testing: only process first 10 URLs
-  const urlsToProcess = uniqueUrls.slice(0, 11);
-  console.log(`Processing first ${urlsToProcess.length} URLs for testing.`);
+  console.log(`Found ${uniqueUrls.length} unique URLs to process.`);
 
   const results = [];
-  for (let i = 0; i < urlsToProcess.length; i++) {
-    const url = urlsToProcess[i];
-    console.log(`[${i + 1}/${urlsToProcess.length}] Fetching: ${url}`);
+  for (let i = 0; i < uniqueUrls.length; i++) {
+    const url = uniqueUrls[i];
+    console.log(`[${i + 1}/${uniqueUrls.length}] Fetching: ${url}`);
     const data = await fetchShoeData(url);
     if (data) results.push(data);
 
