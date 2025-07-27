@@ -11,6 +11,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -25,8 +27,19 @@ jobs:
 
       - name: Commit & Push Results
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b update-runrepeat-shoes
           git add runrepeat-shoes.json
           git commit -m "Weekly update: runrepeat shoes" || echo "No changes to commit"
-          git push
+          git push origin update-runrepeat-shoes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: update-runrepeat-shoes
+          title: "Weekly update: runrepeat shoes"
+          body: "This pull request contains the weekly update for runrepeat shoes."
