@@ -49,6 +49,33 @@ const BRAND_MAP = {
 
 function normalizeBrand(brandFromURL) {
   const clean = brandFromURL.toLowerCase().replace(/[^a-z]/g, "");
+
+  // Handle special cases where brand might be ambiguous
+  if (clean === "under" || clean === "armour") {
+    return "under-armour";
+  }
+  if (clean === "air") {
+    return "air-jordan";
+  }
+  if (clean === "la") {
+    return "la-sportiva";
+  }
+  if (clean === "inov") {
+    return "inov-8";
+  }
+  if (clean === "k") {
+    return "k-swiss";
+  }
+  if (clean === "the") {
+    return "the-north-face";
+  }
+  if (clean === "hey") {
+    return "hey-dude";
+  }
+  if (clean === "n") {
+    return "n-normal";
+  }
+
   return BRAND_MAP[clean] || clean;
 }
 

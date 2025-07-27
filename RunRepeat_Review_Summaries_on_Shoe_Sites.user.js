@@ -149,13 +149,27 @@
   function findMatchingShoe(brand, slug) {
     if (!shoeDatabase) return null;
     console.log("[RunRepeat] Searching for slug:", slug);
+
+    // Normalize the slug by removing terms like 'shoes', 'running shoes', etc.
+    const normalizedSlug = slug.replace(
+      /-(shoes|running-shoes|training-shoes|basketball-shoes)$/i,
+      ""
+    );
+
     const match = shoeDatabase.find((shoe) => {
-      return shoe.brand === brand && shoe.name === slug;
+      return shoe.brand === brand && shoe.name === normalizedSlug;
     });
+
     if (match) {
-      console.log("[RunRepeat] Found match in database for slug:", slug);
+      console.log(
+        "[RunRepeat] Found match in database for slug:",
+        normalizedSlug
+      );
     } else {
-      console.log("[RunRepeat] No match found in database for slug:", slug);
+      console.log(
+        "[RunRepeat] No match found in database for slug:",
+        normalizedSlug
+      );
     }
     return match;
   }
@@ -270,6 +284,10 @@
 
     if (matchingShoe) {
       console.log("[RunRepeat] Matched using database:", matchingShoe);
+      reviewData = {
+        url: matchingShoe.url,
+        title: matchingShoe.title,
+      }; // Set reviewData immediately
       const fetchedData = await fetchAndParseRunRepeat(matchingShoe.url);
       if (fetchedData) {
         console.log(
@@ -282,29 +300,27 @@
           "[RunRepeat] Failed to fetch review data from database URL:",
           matchingShoe.url
         );
-        reviewData = {
-          url: matchingShoe.url,
-          title: matchingShoe.title,
-        };
       }
     } else if (!reviewData && !isFetching) {
       console.log(
         "[RunRepeat] No match in database, attempting URL matching..."
       );
       isFetching = true;
-      reviewData =
-        (await findValidRunRepeatPage(currentSlug, currentConfig.brand)) ||
-        "failed";
-      isFetching = false;
-
-      if (reviewData !== "failed") {
+      const validPage = await findValidRunRepeatPage(
+        currentSlug,
+        currentConfig.brand
+      );
+      if (validPage) {
         console.log(
           "[RunRepeat] Successfully matched using URL:",
-          reviewData.url
+          validPage.url
         );
+        reviewData = validPage; // Set reviewData immediately
       } else {
         console.log("[RunRepeat] URL matching failed.");
+        reviewData = "failed";
       }
+      isFetching = false;
     }
 
     if (reviewData === "failed") {
