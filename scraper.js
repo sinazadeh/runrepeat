@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as fs from "fs";
 import * as path from "path";
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 
 const SITEMAPS = [
   "https://runrepeat.com/sitemaps/training-shoes/en-review-sitemap.xml",
