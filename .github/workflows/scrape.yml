@@ -19,8 +19,9 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install dependencies
-        run: npm install axios cheerio
+      - name: Install dependencies with npm ci
+        # 'npm ci' is a clean install, faster and safer for CI/CD environments.
+        run: npm ci
 
       - name: Run scraper
         run: node scraper.js
