@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RunRepeat Review Summaries on Shoe Sites
 // @namespace    https://github.com/sinazadeh/userscripts
-// @version      1.1.2
+// @version      1.1.5
 // @description  Injects RunRepeat reviews onto product pages of major shoe brands.
 // @author       You
 // @match        https://www.adidas.com/*
@@ -24,6 +24,7 @@
   let isFetching = false;
   let hasFailed = false;
   let lastUrl = location.href;
+  let shoeDatabase = null;
 
   const siteConfigs = {
     "www.adidas.com": {
@@ -201,6 +202,27 @@
     return `<div style="background:white; padding:20px; border-radius:8px; border-top:4px solid ${color}; box-shadow:0 2px 4px rgba(0,0,0,0.05); margin-bottom:16px;"><h4 style="margin:0 0 16px 0; font-size:16px; color:${color}; font-weight:600;">${title}</h4><ul style="margin:0; padding:0; list-style:none; color:#333;">${items.map((item) => `<li style="font-size:14px; line-height:1.5; margin-bottom:10px; padding-left:20px; position:relative;"><span style="position:absolute; left:0; top:1px; color:${color};">${color === "#28a745" ? "✔" : "✘"}</span>${item}</li>`).join("")}</ul></div>`;
   }
 
+  async function loadShoeDatabase() {
+    if (shoeDatabase) return;
+    try {
+      const response = await fetch(
+        "https://raw.githubusercontent.com/sinazadeh/runrepeat/refs/heads/main/runrepeat-shoes.json"
+      );
+      if (!response.ok) throw new Error("Failed to load shoe database");
+      shoeDatabase = await response.json();
+    } catch (error) {
+      console.error("Error loading shoe database:", error);
+      shoeDatabase = [];
+    }
+  }
+
+  function findMatchingShoe(brand, slug) {
+    if (!shoeDatabase) return null;
+    return shoeDatabase.find(
+      (shoe) => shoe.brand === brand && shoe.name === slug
+    );
+  }
+
   async function injectReviewSection() {
     if (hasFailed) return;
 
@@ -213,7 +235,17 @@
       return;
     }
 
-    if (!reviewData && !isFetching) {
+    await loadShoeDatabase();
+    const matchingShoe = findMatchingShoe(currentConfig.brand, currentSlug);
+
+    if (matchingShoe) {
+      console.log("Matched using database:", matchingShoe);
+      reviewData = {
+        url: matchingShoe.url,
+        title: matchingShoe.title,
+      };
+    } else if (!reviewData && !isFetching) {
+      console.log("No match in database, attempting URL matching...");
       isFetching = true;
       reviewData =
         (await findValidRunRepeatPage(currentSlug, currentConfig.brand)) ||
