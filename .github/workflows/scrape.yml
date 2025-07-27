@@ -25,27 +25,17 @@ jobs:
       - name: Run scraper
         run: node scraper.js
 
-      - name: Commit & Push Results
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -B update-runrepeat-shoes
-          git add runrepeat-shoes.json
-          git commit -m "Weekly update: runrepeat shoes" || echo "No changes to commit"
-          git push origin update-runrepeat-shoes --force
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Check for Changes
-        id: changes
-        run: |
-          git diff --exit-code || echo "Changes detected"
-
       - name: Create Pull Request
-        if: steps.changes.outcome == 'success'
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Weekly update: runrepeat shoes"
+          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           branch: update-runrepeat-shoes
           title: "Weekly update: runrepeat shoes"
           body: "This pull request contains the weekly update for runrepeat shoes."
+          # The action will only create a PR if the scraper produced changes.
+          # Optional: Add labels or assignees to the PR
+          # labels: bot, data-update
+          # assignees: your-github-username
