@@ -97,7 +97,7 @@ async function buildDatabase() {
   console.log(`Found ${uniqueUrls.length} unique URLs.`);
 
   // For testing: only process first 10 URLs
-  const urlsToProcess = uniqueUrls.slice(0, 10);
+  const urlsToProcess = uniqueUrls.slice(0, 11);
   console.log(`Processing first ${urlsToProcess.length} URLs for testing.`);
 
   const results = [];
