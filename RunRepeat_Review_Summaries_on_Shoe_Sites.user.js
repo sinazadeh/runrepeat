@@ -1,16 +1,18 @@
 // ==UserScript==
 // @name         RunRepeat Review Summaries on Shoe Sites
 // @namespace    https://github.com/sinazadeh/userscripts
-// @version      1.1.8
+// @version      1.2.0
 // @description  Injects RunRepeat reviews onto product pages of major shoe brands.
 // @author       TheSina
+// @match        https://www.nike.com/*
 // @match        https://www.adidas.com/*
-// @match        https://www.brooksrunning.com/*
-// @match        https://www.hoka.com/*
-// @match        https://www.on.com/*
 // @match        https://www.newbalance.com/*
 // @match        https://www.asics.com/*
-// @match        https://www.nike.com/*
+// @match        https://www.brooksrunning.com/*
+// @match        https://www.hoka.com/*
+// @match        https://www.saucony.com/*
+// @match        https://www.altrarunning.com/*
+// @match        https://www.on.com/*
 // @grant        GM_xmlhttpRequest
 // @connect      runrepeat.com
 // @license      MIT
@@ -139,8 +141,39 @@
         }
         return `nike-${productName}`;
       },
-      injectionTarget: '[data-testid="buying-tools-container"]',
-      injectionMethod: "before",
+      injectionTarget: '[data-testid="atb-button"]',
+      injectionMethod: "after",
+    },
+    "www.saucony.com": {
+      brand: "saucony",
+      getSlug: () => {
+        const el = document.querySelector("h1.product-name-v2");
+        if (!el) return null;
+        let productName = el.textContent
+          .trim()
+          .toLowerCase()
+          .replace(/^(?:men's|women's)\s/i, "")
+          .replace(/\s+/g, "-");
+        return `saucony-${productName}`;
+      },
+      injectionTarget: ".add-to-cart-container",
+      injectionMethod: "after",
+    },
+    "www.altrarunning.com": {
+      brand: "altra",
+      getSlug: () => {
+        const titleElement = document.querySelector(
+          "h1.b-product_details-name"
+        );
+        if (!titleElement) return null;
+        return titleElement.textContent
+          .trim()
+          .toLowerCase()
+          .replace(/^(men's|women's)\s+/i, "") // Remove gender prefix
+          .replace(/\s+/g, "-");
+      },
+      injectionTarget: ".b-product_actions",
+      injectionMethod: "after",
     },
   };
 
