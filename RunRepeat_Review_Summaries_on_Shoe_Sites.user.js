@@ -3,13 +3,14 @@
 // @namespace    https://github.com/sinazadeh/userscripts
 // @version      1.1.8
 // @description  Injects RunRepeat reviews onto product pages of major shoe brands.
-// @author       You
+// @author       TheSina
 // @match        https://www.adidas.com/*
 // @match        https://www.brooksrunning.com/*
 // @match        https://www.hoka.com/*
 // @match        https://www.on.com/*
 // @match        https://www.newbalance.com/*
 // @match        https://www.asics.com/*
+// @match        https://www.nike.com/*
 // @grant        GM_xmlhttpRequest
 // @connect      runrepeat.com
 // @license      MIT
@@ -122,6 +123,24 @@
       },
       injectionTarget: ".pdp-top__cta.product-add-to-cart",
       injectionMethod: "after",
+    },
+    "www.nike.com": {
+      brand: "nike",
+      getSlug: () => {
+        const el = document.querySelector("#pdp_product_title");
+        if (!el) return null;
+        let productName = el.textContent
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, "-");
+        // The title on Nike.com might already include "Nike", let's remove it to avoid duplication.
+        if (productName.startsWith("nike-")) {
+          productName = productName.substring(5);
+        }
+        return `nike-${productName}`;
+      },
+      injectionTarget: '[data-testid="buying-tools-container"]',
+      injectionMethod: "before",
     },
   };
 
@@ -357,7 +376,11 @@
         ) {
           const reviewSection = createRunRepeatSection(reviewData);
           reviewSection.setAttribute("data-runrepeat-injected", "true");
-          target.parentNode.insertBefore(reviewSection, target.nextSibling);
+          if (currentConfig.injectionMethod === "before") {
+            target.parentNode.insertBefore(reviewSection, target);
+          } else {
+            target.parentNode.insertBefore(reviewSection, target.nextSibling);
+          }
           reinjectionAttempts = 0; // Reset attempts after successful injection
           console.log("[RunRepeat] Review section successfully injected");
         }
