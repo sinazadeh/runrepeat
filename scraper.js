@@ -75,6 +75,9 @@ function normalizeBrand(brandFromURL) {
   if (clean === "n") {
     return "n-normal";
   }
+  if (clean === "new") {
+    return "new-balance";
+  }
 
   return BRAND_MAP[clean] || clean;
 }
