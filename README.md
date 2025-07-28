@@ -1,8 +1,6 @@
-# Runrepeat userscript
+# RunRepeat Review Summaries on Shoe Sites
 
 ![Untitled](https://github.com/user-attachments/assets/80caeba0-b7cc-4bdb-879b-290acf93bf32)
-
-# RunRepeat Review Summaries on Shoe Sites
 
 ## Overview
 This userscript injects expert reviews from RunRepeat directly onto product pages of major shoe brands. It enhances the shopping experience by providing detailed insights, pros, cons, and audience scores for various shoes.
