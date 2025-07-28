@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RunRepeat Review Summaries on Shoe Sites
 // @namespace    https://github.com/sinazadeh/userscripts
-// @version      1.2.0
+// @version      1.2.1
 // @description  Injects RunRepeat reviews onto product pages of major shoe brands.
 // @author       TheSina
 // @match        https://www.nike.com/*
