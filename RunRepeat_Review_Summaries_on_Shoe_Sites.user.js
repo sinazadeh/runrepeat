@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RunRepeat Review Summaries on Shoe Sites
 // @namespace    https://github.com/sinazadeh/userscripts
-// @version      1.1.7
+// @version      1.1.8
 // @description  Injects RunRepeat reviews onto product pages of major shoe brands.
 // @author       You
 // @match        https://www.adidas.com/*
@@ -48,23 +48,29 @@
     },
     "www.brooksrunning.com": {
       brand: "brooks",
-      getSlug: () =>
-        document
-          .querySelector("h1.m-buy-box-header__name")
-          ?.textContent.trim()
-          .toLowerCase()
-          .replace(/\s+/g, "-") || null,
+      getSlug: () => {
+        const productName =
+          document
+            .querySelector("h1.m-buy-box-header__name")
+            ?.textContent.trim()
+            .toLowerCase()
+            .replace(/\s+/g, "-") || null;
+        return productName ? `brooks-${productName}` : null;
+      },
       injectionTarget: ".m-buy-box .js-pdp-add-cart-btn",
       injectionMethod: "after",
     },
     "www.hoka.com": {
       brand: "hoka",
-      getSlug: () =>
-        document
-          .querySelector('h1[data-qa="productName"]')
-          ?.textContent.trim()
-          .toLowerCase()
-          .replace(/\s+/g, "-") || null,
+      getSlug: () => {
+        const productName =
+          document
+            .querySelector('h1[data-qa="productName"]')
+            ?.textContent.trim()
+            .toLowerCase()
+            .replace(/\s+/g, "-") || null;
+        return productName ? `hoka-${productName}` : null;
+      },
       injectionTarget: "div.product-primary-attributes",
       injectionMethod: "after",
     },
@@ -97,19 +103,23 @@
         txt = txt
           .replace(/(\d)(v\d+)/gi, "$1 $2")
           .replace(/([a-z])([A-Z])/g, "$1 $2");
-        return txt.toLowerCase().replace(/\s+/g, "-");
+        const productName = txt.toLowerCase().replace(/\s+/g, "-");
+        return `new-balance-${productName}`;
       },
       injectionTarget: ".prices-add-to-cart-actions",
       injectionMethod: "after",
     },
     "www.asics.com": {
       brand: "asics",
-      getSlug: () =>
-        document
-          .querySelector("h1.pdp-top__product-name__not-ot")
-          ?.textContent.trim()
-          .toLowerCase()
-          .replace(/\s+/g, "-") || null,
+      getSlug: () => {
+        const productName =
+          document
+            .querySelector("h1.pdp-top__product-name__not-ot")
+            ?.textContent.trim()
+            .toLowerCase()
+            .replace(/\s+/g, "-") || null;
+        return productName ? `asics-${productName}` : null;
+      },
       injectionTarget: ".pdp-top__cta.product-add-to-cart",
       injectionMethod: "after",
     },
@@ -273,77 +283,85 @@
   }
 
   async function injectReviewSection() {
-    if (hasFailed || reviewData) return; // Stop if already matched or failed
+    // Part 1: Fetch data if we don't have it.
+    if (!reviewData && !hasFailed) {
+      if (isFetching) return; // Don't start a new fetch if one is in progress
 
-    currentConfig = siteConfigs[window.location.hostname];
-    if (!currentConfig) return;
+      currentConfig = siteConfigs[window.location.hostname];
+      if (!currentConfig) return;
 
-    currentSlug = currentConfig.getSlug();
-    if (!currentSlug) {
-      setTimeout(injectReviewSection, 500);
-      return;
-    }
+      currentSlug = currentConfig.getSlug();
+      if (!currentSlug) {
+        setTimeout(injectReviewSection, 500); // retry getting slug
+        return;
+      }
 
-    await loadShoeDatabase();
-    const matchingShoe = findMatchingShoe(currentConfig.brand, currentSlug);
+      isFetching = true;
+      await loadShoeDatabase();
+      const matchingShoe = findMatchingShoe(currentConfig.brand, currentSlug);
 
-    if (matchingShoe) {
-      console.log("[RunRepeat] Matched using database:", matchingShoe);
-      reviewData = {
-        url: matchingShoe.url,
-        title: matchingShoe.title,
-      }; // Set reviewData immediately
-      const fetchedData = await fetchAndParseRunRepeat(matchingShoe.url);
-      if (fetchedData) {
+      let fetchedData = null;
+      if (matchingShoe) {
+        console.log("[RunRepeat] Matched using database:", matchingShoe);
+        fetchedData = await fetchAndParseRunRepeat(matchingShoe.url);
+        if (fetchedData) {
+          console.log(
+            "[RunRepeat] Successfully fetched review data from database URL:",
+            matchingShoe.url
+          );
+        } else {
+          console.log(
+            "[RunRepeat] Failed to fetch review data from database URL:",
+            matchingShoe.url
+          );
+        }
+      } else {
         console.log(
-          "[RunRepeat] Successfully fetched review data from database URL:",
-          matchingShoe.url
+          "[RunRepeat] No match in database, attempting URL matching..."
         );
+        fetchedData = await findValidRunRepeatPage(
+          currentSlug,
+          currentConfig.brand
+        );
+        if (fetchedData) {
+          console.log(
+            "[RunRepeat] Successfully matched using URL:",
+            fetchedData.url
+          );
+        } else {
+          console.log("[RunRepeat] URL matching failed.");
+        }
+      }
+
+      if (fetchedData) {
         reviewData = fetchedData;
       } else {
-        console.log(
-          "[RunRepeat] Failed to fetch review data from database URL:",
-          matchingShoe.url
-        );
-      }
-    } else if (!reviewData && !isFetching) {
-      console.log(
-        "[RunRepeat] No match in database, attempting URL matching..."
-      );
-      isFetching = true;
-      const validPage = await findValidRunRepeatPage(
-        currentSlug,
-        currentConfig.brand
-      );
-      if (validPage) {
-        console.log(
-          "[RunRepeat] Successfully matched using URL:",
-          validPage.url
-        );
-        reviewData = validPage; // Set reviewData immediately
-      } else {
-        console.log("[RunRepeat] URL matching failed.");
         reviewData = "failed";
+        hasFailed = true;
       }
       isFetching = false;
     }
 
-    if (reviewData === "failed") {
-      hasFailed = true;
-      return;
-    }
+    // Part 2: Inject element if we have data.
+    if (reviewData && reviewData !== "failed") {
+      const target = document.querySelector(currentConfig.injectionTarget);
+      if (!target) {
+        return; // The observer will retry if the target appears later
+      }
 
-    const target = document.querySelector(currentConfig.injectionTarget);
-    if (!target) {
-      setTimeout(injectReviewSection, 500);
-      return;
-    }
-
-    if (!document.querySelector(".runrepeat-section")) {
-      target.parentNode.insertBefore(
-        createRunRepeatSection(reviewData),
-        target.nextSibling
-      );
+      // Add a slight delay to ensure the page's dynamic content stabilizes
+      setTimeout(() => {
+        if (
+          target.parentNode &&
+          !document.querySelector(".runrepeat-section")
+        ) {
+          const reviewSection = createRunRepeatSection(reviewData);
+          reviewSection.setAttribute("data-runrepeat-injected", "true");
+          target.parentNode.insertBefore(reviewSection, target.nextSibling);
+          reinjectionAttempts = 0; // Reset attempts after successful injection
+          console.log("[RunRepeat] Review section successfully injected");
+        }
+      }, 300);
     }
   }
 
@@ -352,6 +370,7 @@
       lastUrl = location.href;
       reviewData = null;
       hasFailed = false;
+      reinjectionAttempts = 0; // Reset attempts on URL change
       document.querySelector(".runrepeat-section")?.remove();
       debounceInject();
     }
@@ -367,17 +386,41 @@
   }
 
   let injectTimeout;
+  let reinjectionAttempts = 0;
+  const maxReinjectionAttempts = 5;
+
   function debounceInject() {
     clearTimeout(injectTimeout);
     injectTimeout = setTimeout(injectReviewSection, 400);
   }
 
   const observer = new MutationObserver(() => {
-    if (!document.querySelector(".runrepeat-section")) {
-      debounceInject();
+    const target = document.querySelector(currentConfig?.injectionTarget);
+    if (
+      target &&
+      !document.querySelector(".runrepeat-section") &&
+      reviewData &&
+      reviewData !== "failed"
+    ) {
+      reinjectionAttempts++;
+      if (reinjectionAttempts <= maxReinjectionAttempts) {
+        console.log(
+          `[RunRepeat] Review section missing, re-injecting... (attempt ${reinjectionAttempts})`
+        );
+        debounceInject();
+      } else {
+        console.log(
+          "[RunRepeat] Maximum re-injection attempts reached, stopping."
+        );
+      }
     }
   });
-  observer.observe(document.body, { childList: true, subtree: true });
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["class", "id", "style"],
+  });
 
   hookHistoryEvents();
   injectReviewSection();
