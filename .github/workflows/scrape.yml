@@ -37,6 +37,5 @@ jobs:
           title: "Weekly update: runrepeat shoes"
           body: "This pull request contains the weekly update for runrepeat shoes."
           # The action will only create a PR if the scraper produced changes.
-          # Optional: Add labels or assignees to the PR
-          # labels: bot, data-update
-          # assignees: your-github-username
+          labels: bot, data-update
+          assignees: sinazadeh
