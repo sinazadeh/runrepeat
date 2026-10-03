@@ -141,6 +141,14 @@
     return null;
   }
 
+  // RunRepeat redirects some retired models to their successor (e.g.
+  // nike-quest-4 -> nike-quest-6), so check the page is about the shoe we
+  // asked for. Pages without a readable title are given the benefit of the
+  // doubt.
+  function isReviewFor(review, key) {
+    return !review.title || productKey(review.title) === key;
+  }
+
   // Fallback for shoes added to RunRepeat since the database was last built.
   function guessRunRepeatUrls(brands, key) {
     const hasBrand = brands.some((brand) => key.startsWith(`${brand}-`));
@@ -162,6 +170,10 @@
     const intro = doc.querySelector("#product-intro");
     const scoreBox = intro?.querySelector(".our-score__box");
     return {
+      title: text(doc.querySelector("#product-title h1")).replace(
+        /\s*review$/i,
+        ""
+      ),
       verdict: text(intro?.querySelector(".our-score + div")),
       score:
         parseInt(text(scoreBox?.querySelector(".our-score__value")), 10) || 0,
@@ -357,6 +369,7 @@
         prepareDatabase,
         findMatchingShoe,
         guessRunRepeatUrls,
+        isReviewFor,
         parseRunRepeat,
         createRunRepeatSection,
       };
@@ -430,7 +443,7 @@
     const shoe = findMatchingShoe(database, config.brands, key);
     if (shoe) {
       log("Matched in database:", shoe.url);
-      const review = await fetchReview(shoe.url);
+      const review = await fetchReviewFor(shoe.url, shoe.key);
       if (review) return review;
     }
     // Also covers database entries whose RunRepeat page has since moved.
@@ -438,8 +451,19 @@
       (url) => url !== shoe?.url
     );
     log(`Trying RunRepeat URLs for "${key}":`, urls);
-    const pages = await Promise.all(urls.map(fetchReview));
+    const pages = await Promise.all(
+      urls.map((url) => fetchReviewFor(url, productKey(new URL(url).pathname)))
+    );
     return pages.find(Boolean) || null;
+  }
+
+  async function fetchReviewFor(url, key) {
+    const review = await fetchReview(url);
+    if (review && !isReviewFor(review, key)) {
+      log(`${url} is about "${review.title}", not "${key}"; skipping it.`);
+      return null;
+    }
+    return review;
   }
 
   function readProductKey() {

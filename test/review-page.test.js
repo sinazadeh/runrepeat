@@ -18,6 +18,18 @@ function parseFixture(slug) {
 // deep-equality against objects created here.
 const plain = (value) => JSON.parse(JSON.stringify(value));
 
+test("parses the product title without the trailing 'review'", () => {
+  assert.equal(parseFixture("on-cloudmonster-3").title, "On Cloudmonster 3");
+});
+
+test("rejects a page about a different shoe, e.g. after a redirect", () => {
+  // runrepeat.com/nike-quest-4 redirects to the Quest 6 review.
+  const review = parseFixture("nike-quest-6");
+  assert.equal(userscript.isReviewFor(review, "nike-quest-6"), true);
+  assert.equal(userscript.isReviewFor(review, "nike-quest-4"), false);
+  assert.equal(userscript.isReviewFor({ title: "" }, "nike-quest-4"), true);
+});
+
 test("parses the verdict, not the score widget before it", () => {
   const review = parseFixture("on-cloudmonster-3");
   assert.match(review.verdict, /^The Cloudmonster 3 holds onto what defines/);
