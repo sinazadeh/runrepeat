@@ -3,6 +3,7 @@
   "type": "module",
   "scripts": {
     "scrape": "node scraper.js",
+    "check-pages": "node scripts/check-review-pages.js",
     "test": "node --test test/*.test.js"
   },
   "dependencies": {
