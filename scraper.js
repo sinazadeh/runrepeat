@@ -4,27 +4,28 @@ import * as path from "path";
 import { pathToFileURL } from "url";
 import * as cheerio from "cheerio";
 
-const SITEMAPS = [
-  "https://runrepeat.com/sitemaps/training-shoes/en-review-sitemap.xml",
-  "https://runrepeat.com/sitemaps/track-spikes/en-review-sitemap.xml",
-  "https://runrepeat.com/sitemaps/tennis-shoes/en-review-sitemap.xml",
-  "https://runrepeat.com/sitemaps/sneakers/en-review-sitemap.xml",
-  "https://runrepeat.com/sitemaps/running-shoes/en-review-sitemap.xml",
-  "https://runrepeat.com/sitemaps/hiking-shoes/en-review-sitemap.xml",
-  "https://runrepeat.com/sitemaps/hiking-sandals/en-review-sitemap.xml",
-  "https://runrepeat.com/sitemaps/hiking-boots/en-review-sitemap.xml",
-  "https://runrepeat.com/sitemaps/cross-country-shoes/en-review-sitemap.xml",
-  "https://runrepeat.com/sitemaps/basketball-shoes/en-review-sitemap.xml",
-];
+const SITE = "https://runrepeat.com";
+// RunRepeat's sitemaps have been broken since late 2025, so the shoe list comes
+// from its catalogs, whose pages each link about 30 shoes to their reviews.
+const CATALOGS = [
+  "running-shoes",
+  "training-shoes",
+  "track-spikes",
+  "tennis-shoes",
+  "sneakers",
+  "hiking-shoes",
+  "hiking-sandals",
+  "hiking-boots",
+  "cross-country-shoes",
+  "basketball-shoes",
+].map((category) => `${SITE}/catalog/${category}`);
 
 const OUTPUT_FILE = path.resolve("./runrepeat-shoes.json");
 const REQUEST_TIMEOUT_MS = 30000;
 const MAX_ATTEMPTS = 3;
 // Refuse to overwrite the database if it would lose more than this share of
-// its entries, which usually means RunRepeat blocked or rate-limited the run.
+// its entries, which usually means RunRepeat changed or blocked something.
 const MAX_SHRINK_RATIO = 0.1;
-// Give up early instead of crawling for hours if every request is failing.
-const MAX_CONSECUTIVE_FAILURES = 20;
 
 // RunRepeat review URLs start with the brand, e.g. runrepeat.com/new-balance-…
 // Brands with a hyphen in their slug must be listed here to be read whole.
@@ -79,7 +80,7 @@ function toEntry(url, title) {
   return { brand: detectBrand(url), name: slugify(title), url, title };
 }
 
-async function get(url) {
+export async function get(url) {
   for (let attempt = 1; ; attempt++) {
     try {
       const { data } = await http.get(url);
@@ -94,22 +95,41 @@ async function get(url) {
   }
 }
 
-async function fetchSitemap(url) {
-  console.log(`Fetching sitemap: ${url}`);
-  const data = await get(url);
-  return [...data.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1]);
+// Returns the shoes listed on one catalog page and the highest page number
+// it links to.
+export function parseCatalogPage(html, pageUrl) {
+  const $ = cheerio.load(html);
+  const shoes = $("li.product_list .product-name a")
+    .map((_, a) => ({
+      url: new URL($(a).attr("href"), SITE).href,
+      title: $(a).text().replace(/\s+/g, " ").trim(),
+    }))
+    .get()
+    .filter((shoe) => shoe.title);
+
+  const { pathname } = new URL(pageUrl);
+  const pages = $("a[href*='page=']")
+    .map((_, a) => new URL($(a).attr("href"), pageUrl))
+    .get()
+    .filter((link) => link.pathname === pathname) // not other languages
+    .map((link) => Number(link.searchParams.get("page")) || 1);
+  return { shoes, lastPage: Math.max(1, ...pages) };
 }
 
-// Returns null for pages without a review title; throws if the page can't be
-// fetched.
-async function fetchShoeData(url) {
-  const $ = cheerio.load(await get(url));
-  const title = $("#product-title h1 span")
-    .text()
-    .trim()
-    .replace(/\s*review$/i, "")
-    .trim();
-  return title ? toEntry(url, title) : null;
+async function fetchCatalog(catalogUrl) {
+  const shoes = [];
+  for (let page = 1, lastPage = 1; page <= lastPage; page++) {
+    const pageUrl = page === 1 ? catalogUrl : `${catalogUrl}?page=${page}`;
+    console.log(`Fetching ${pageUrl}`);
+    const result = parseCatalogPage(await get(pageUrl), pageUrl);
+    if (!result.shoes.length) {
+      throw new Error(`No shoes on ${pageUrl}; did the catalog layout change?`);
+    }
+    shoes.push(...result.shoes);
+    lastPage = Math.max(lastPage, result.lastPage);
+    await delay(); // random delay between 2–4 sec
+  }
+  return shoes;
 }
 
 function delay(min = 2000, max = 4000) {
@@ -128,60 +148,28 @@ function readPreviousDatabase() {
 
 async function buildDatabase() {
   const previous = readPreviousDatabase();
-  const previousByUrl = new Map(previous.map((shoe) => [shoe.url, shoe]));
 
-  const allUrls = [];
-  for (const sitemap of SITEMAPS) {
-    const urls = await fetchSitemap(sitemap);
-    allUrls.push(...urls);
-  }
-
-  const uniqueUrls = [...new Set(allUrls)];
-  console.log(`Found ${uniqueUrls.length} unique URLs to process.`);
-
-  const results = [];
-  let failures = 0;
-  let consecutiveFailures = 0;
-  for (let i = 0; i < uniqueUrls.length; i++) {
-    const url = uniqueUrls[i];
-    console.log(`[${i + 1}/${uniqueUrls.length}] Fetching: ${url}`);
-    try {
-      const data = await fetchShoeData(url);
-      if (data) results.push(data);
-      consecutiveFailures = 0;
-    } catch (err) {
-      failures++;
-      if (++consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
-        throw new Error(
-          `${consecutiveFailures} requests in a row failed; giving up.`
-        );
-      }
-      // Keep last week's entry rather than dropping the shoe over a blip,
-      // unless the page is gone.
-      const old = err.response?.status !== 404 && previousByUrl.get(url);
-      console.warn(
-        `Failed to fetch ${url}: ${err.message}` +
-          (old ? " (keeping previous entry)" : "")
-      );
-      if (old) results.push(toEntry(url, old.title));
+  const byUrl = new Map();
+  for (const catalog of CATALOGS) {
+    for (const { url, title } of await fetchCatalog(catalog)) {
+      if (!byUrl.has(url)) byUrl.set(url, toEntry(url, title));
     }
-
-    await delay(); // random delay between 2–4 sec
   }
+  // Sorted so the weekly diff shows real changes, not catalog reshuffles.
+  const results = [...byUrl.values()].sort((a, b) =>
+    a.url.localeCompare(b.url)
+  );
 
   const minimum = Math.ceil(previous.length * (1 - MAX_SHRINK_RATIO));
   if (results.length < minimum) {
     throw new Error(
-      `Only ${results.length} entries (previously ${previous.length}, ` +
-        `${failures} failed requests); not overwriting ${OUTPUT_FILE}.`
+      `Only ${results.length} entries (previously ${previous.length}); ` +
+        `not overwriting ${OUTPUT_FILE}.`
     );
   }
 
   fs.writeFileSync(OUTPUT_FILE, JSON.stringify(results, null, 2));
-  console.log(
-    `Database built: ${OUTPUT_FILE} with ${results.length} entries ` +
-      `(${failures} failed requests).`
-  );
+  console.log(`Database built: ${OUTPUT_FILE} with ${results.length} entries.`);
 }
 
 const isMain =

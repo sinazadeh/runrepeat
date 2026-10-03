@@ -9,7 +9,7 @@ const userscript = loadUserscript({ document });
 
 // Fixtures are trimmed copies of real RunRepeat review pages.
 function parseFixture(slug) {
-  const file = new URL(`./fixtures/${slug}.html`, import.meta.url);
+  const file = new URL(`./fixtures/reviews/${slug}.html`, import.meta.url);
   const page = new JSDOM(fs.readFileSync(file, "utf8")).window.document;
   return userscript.parseRunRepeat(page);
 }
@@ -60,7 +60,9 @@ test("parses pros, cons and awards", () => {
 });
 
 test("every fixture yields a complete review", () => {
-  for (const file of fs.readdirSync(new URL("./fixtures/", import.meta.url))) {
+  for (const file of fs.readdirSync(
+    new URL("./fixtures/reviews/", import.meta.url)
+  )) {
     const review = parseFixture(file.replace(/\.html$/, ""));
     assert.ok(review.verdict.length > 50, `${file}: verdict`);
     assert.ok(review.score > 0, `${file}: score`);
