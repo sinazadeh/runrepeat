@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RunRepeat Review Summaries on Shoe Sites
 // @namespace    https://github.com/sinazadeh/runrepeat
-// @version      1.3.1
+// @version      1.3.2
 // @description  Injects RunRepeat reviews onto product pages of major shoe brands.
 // @author       TheSina
 // @match        https://www.nike.com/*
@@ -36,6 +36,16 @@
   // "Trail" is left alone: it is often part of the model name ("Endorphin Trail").
   const SHOE_SUFFIX =
     /-(?:running-|training-|golf-|basketball-|tennis-|walking-|hiking-)?shoes?$/;
+  // Shop stylesheets often restyle headings (fonts, uppercase); undo that.
+  const HEADING_RESET =
+    "font-family:inherit; text-transform:none; letter-spacing:normal; line-height:1.3;";
+  // Colours for RunRepeat's score_* classes (e.g. "score_light_green").
+  const SCORE_TONE_COLORS = {
+    green: "#098040",
+    light_green: "#54cb62",
+    yellow: "#ffb717",
+    red: "#eb1c24",
+  };
 
   // brands: RunRepeat brand slugs (as stored in the database) sold on the site.
   // titleSelector: element holding the product name.
@@ -90,8 +100,9 @@
     },
     "www.altrarunning.com": {
       brands: ["altra"],
-      titleSelector: "h1.b-product_details-name",
-      injectionTarget: ".b-product_actions",
+      titleSelector: ".main-product-standard__block--product-title h1",
+      injectionTarget:
+        ".main-product-standard .main-product-standard__add-to-cart",
     },
   };
 
@@ -130,6 +141,14 @@
     return null;
   }
 
+  // RunRepeat redirects some retired models to their successor (e.g.
+  // nike-quest-4 -> nike-quest-6), so check the page is about the shoe we
+  // asked for. Pages without a readable title are given the benefit of the
+  // doubt.
+  function isReviewFor(review, key) {
+    return !review.title || productKey(review.title) === key;
+  }
+
   // Fallback for shoes added to RunRepeat since the database was last built.
   function guessRunRepeatUrls(brands, key) {
     const hasBrand = brands.some((brand) => key.startsWith(`${brand}-`));
@@ -140,26 +159,41 @@
     ];
   }
 
+  // Reads a RunRepeat review page. "#product-intro" holds the score widget
+  // (overall score plus per-use scores) followed by the verdict text.
   function parseRunRepeat(doc) {
-    const q = (sel) => doc.querySelector(sel)?.textContent.trim() || "";
-    const scoreEl = doc.querySelector(
-      "#audience_verdict #corescore .corescore-big__score"
-    );
+    const text = (node) => node?.textContent.replace(/\s+/g, " ").trim() || "";
+    const tone = (node) =>
+      [...(node?.classList || [])]
+        .find((name) => name.startsWith("score_"))
+        ?.slice("score_".length) || "";
+    const intro = doc.querySelector("#product-intro");
+    const scoreBox = intro?.querySelector(".our-score__box");
     return {
-      verdict: q("#product-intro .product-intro-verdict + div"),
-      pros: [...doc.querySelectorAll("#the_good ul li")].map((li) =>
-        li.textContent.trim()
+      title: text(doc.querySelector("#product-title h1")).replace(
+        /\s*review$/i,
+        ""
       ),
-      cons: [...doc.querySelectorAll("#the_bad ul li")].map((li) =>
-        li.textContent.trim()
+      verdict: text(intro?.querySelector(".our-score + div")),
+      score:
+        parseInt(text(scoreBox?.querySelector(".our-score__value")), 10) || 0,
+      scoreText: text(scoreBox?.querySelector(".our-score__label")),
+      scoreTone: tone(scoreBox),
+      subScores: [...(intro?.querySelectorAll(".our-score__sub") || [])]
+        .map((sub) => {
+          const value = sub.querySelector(".our-score__sub-value");
+          return {
+            name: text(sub.querySelector(".our-score__sub-name")),
+            value: text(value),
+            tone: tone(value),
+          };
+        })
+        .filter((sub) => sub.name && sub.value),
+      pros: [...doc.querySelectorAll("#the_good ul li")].map(text),
+      cons: [...doc.querySelectorAll("#the_bad ul li")].map(text),
+      awards: [...doc.querySelectorAll("#awards_section .awards-list li")].map(
+        text
       ),
-      audienceScore: parseInt(scoreEl?.textContent.trim() || "0", 10),
-      scoreText: q("#audience_verdict .corescore-big__text"),
-      awards: [
-        ...doc.querySelectorAll(
-          "#product-intro ul.awards-list li, #audience_verdict ul.awards-list li"
-        ),
-      ].map((li) => li.textContent.replace(/\s+/g, " ").trim()),
     };
   }
 
@@ -172,26 +206,21 @@
     return node;
   }
 
-  function createRunRepeatSection(data) {
-    const scoreColorMap = {
-      superb: "#098040",
-      great: "#098040",
-      good: "#54cb62",
-      decent: "#ffb717",
-      bad: "#eb1c24",
-    };
-    const scoreKey = (data.scoreText || "").replace("!", "").toLowerCase();
-    const scoreColor = scoreColorMap[scoreKey] || "#6c757d";
+  function toneColor(tone) {
+    return SCORE_TONE_COLORS[tone] || "#6c757d";
+  }
 
+  function createRunRepeatSection(data) {
+    const scoreColor = toneColor(data.scoreTone);
     const scoreBadge =
-      data.audienceScore > 0 &&
+      data.score > 0 &&
       el(
         "div",
         `display:flex; align-items:center; gap:8px; background:white; padding:8px 16px; border-radius:20px; border:2px solid ${scoreColor};`,
         el(
           "div",
           `font-size:24px; font-weight:bold; color:${scoreColor}; line-height:1;`,
-          String(data.audienceScore)
+          String(data.score)
         ),
         el(
           "div",
@@ -225,19 +254,20 @@
           ),
           el(
             "h3",
-            "margin:0; font-size:20px; font-weight:600; color:#111;",
+            `${HEADING_RESET} margin:0; font-size:20px; font-weight:600; color:#111;`,
             "Expert Review"
           )
         ),
         scoreBadge
       ),
+      renderSubScores(data.subScores),
       renderAwards(data.awards),
       el(
         "div",
         "margin-bottom:20px;",
         el(
           "h4",
-          "margin:0 0 10px 0; font-size:18px; color:#111; font-weight:600;",
+          `${HEADING_RESET} margin:0 0 10px 0; font-size:18px; color:#111; font-weight:600;`,
           "Expert Verdict"
         ),
         el(
@@ -258,6 +288,23 @@
     return section;
   }
 
+  // Per-use scores, e.g. "Daily running 84", "Tempo 42".
+  function renderSubScores(subScores) {
+    if (!subScores?.length) return null;
+    return el(
+      "div",
+      "display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px;",
+      ...subScores.map((sub) =>
+        el(
+          "span",
+          "display:inline-flex; align-items:center; gap:6px; background:white; font-size:13px; color:#333; padding:6px 12px; border-radius:15px; border:1px solid #e0e0e0;",
+          sub.name,
+          el("strong", `color:${toneColor(sub.tone)};`, sub.value)
+        )
+      )
+    );
+  }
+
   function renderAwards(awards) {
     if (!awards?.length) return null;
     return el(
@@ -265,7 +312,7 @@
       "margin-bottom:20px;",
       el(
         "h4",
-        "margin:0 0 10px 0; font-size:14px; color:#555; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;",
+        `${HEADING_RESET} margin:0 0 10px 0; font-size:14px; color:#555; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;`,
         "Awards & Recognition"
       ),
       el(
@@ -289,7 +336,7 @@
       `background:white; padding:20px; border-radius:8px; border-top:4px solid ${color}; box-shadow:0 2px 4px rgba(0,0,0,0.05); margin-bottom:16px;`,
       el(
         "h4",
-        `margin:0 0 16px 0; font-size:16px; color:${color}; font-weight:600;`,
+        `${HEADING_RESET} margin:0 0 16px 0; font-size:16px; color:${color}; font-weight:600;`,
         title
       ),
       el(
@@ -322,6 +369,9 @@
         prepareDatabase,
         findMatchingShoe,
         guessRunRepeatUrls,
+        isReviewFor,
+        parseRunRepeat,
+        createRunRepeatSection,
       };
     }
     return;
@@ -393,12 +443,27 @@
     const shoe = findMatchingShoe(database, config.brands, key);
     if (shoe) {
       log("Matched in database:", shoe.url);
-      return fetchReview(shoe.url);
+      const review = await fetchReviewFor(shoe.url, shoe.key);
+      if (review) return review;
     }
-    const urls = guessRunRepeatUrls(config.brands, key);
-    log(`No database match for "${key}", trying:`, urls);
-    const pages = await Promise.all(urls.map(fetchReview));
+    // Also covers database entries whose RunRepeat page has since moved.
+    const urls = guessRunRepeatUrls(config.brands, key).filter(
+      (url) => url !== shoe?.url
+    );
+    log(`Trying RunRepeat URLs for "${key}":`, urls);
+    const pages = await Promise.all(
+      urls.map((url) => fetchReviewFor(url, productKey(new URL(url).pathname)))
+    );
     return pages.find(Boolean) || null;
+  }
+
+  async function fetchReviewFor(url, key) {
+    const review = await fetchReview(url);
+    if (review && !isReviewFor(review, key)) {
+      log(`${url} is about "${review.title}", not "${key}"; skipping it.`);
+      return null;
+    }
+    return review;
   }
 
   function readProductKey() {

@@ -17,7 +17,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
+          cache: npm
 
       - name: Install dependencies with npm ci
         # 'npm ci' is a clean install, faster and safer for CI/CD environments.
@@ -39,3 +40,8 @@ jobs:
           # The action will only create a PR if the scraper produced changes.
           labels: bot, data-update
           assignees: sinazadeh
+
+      # Fails the run (and emails the repo owner) if RunRepeat changes its
+      # review page layout in a way the userscript can't read.
+      - name: Check the userscript can read RunRepeat review pages
+        run: npm run check-pages

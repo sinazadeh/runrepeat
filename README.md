@@ -30,18 +30,19 @@ The script currently supports the following websites:
 ---
 
 ## How it works
-1. Every week, `scraper.js` reads RunRepeat's review sitemaps and saves each shoe's brand, title and URL to `runrepeat-shoes.json`. A GitHub Action opens a pull request with the changes.
+1. Every week, `scraper.js` reads RunRepeat's shoe catalogs and saves each shoe's brand, title and review URL to `runrepeat-shoes.json`. A GitHub Action opens a pull request with the changes, then checks that the userscript can still read RunRepeat's review pages.
 2. On a product page, the userscript reads the product name, normalizes it (e.g. `Men's Fresh Foam X 1080v14` → `fresh-foam-x-1080-v14`) and looks it up in that file.
 3. If there is no match, it tries the RunRepeat URL the shoe would most likely have.
-4. It then fetches the review page from runrepeat.com and shows the verdict, pros, cons, awards and audience score.
+4. It then fetches the review page from runrepeat.com, checks it is about the same shoe, and shows the score, per-use scores, awards, verdict, pros and cons.
 
 Open the browser console and filter by `[RunRepeat]` to see what was matched.
 
 ## Development
 ```sh
 npm ci
-npm test         # matching tests, run against the current runrepeat-shoes.json
-npm run scrape   # rebuilds runrepeat-shoes.json (takes about an hour)
+npm test              # offline tests: matching, plus parsing saved RunRepeat pages
+npm run scrape        # rebuilds runrepeat-shoes.json (takes about two minutes)
+npm run check-pages   # checks the userscript can read live RunRepeat review pages
 ```
 
 To support another site, add an entry to `siteConfigs` in the userscript and its domain to the `@match` lines. Bump `@version` with every userscript change so installed copies update.

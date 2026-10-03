@@ -1,26 +1,14 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import test from "node:test";
-import vm from "node:vm";
 import { detectBrand, slugify as scraperSlugify } from "../scraper.js";
+import { loadUserscript } from "./helpers.js";
 
 const userscript = loadUserscript();
 const shoes = JSON.parse(
   fs.readFileSync(new URL("../runrepeat-shoes.json", import.meta.url), "utf8")
 );
 const database = userscript.prepareDatabase(shoes);
-
-// Runs the userscript outside a userscript manager, where it exports its
-// helpers instead of touching the page.
-function loadUserscript() {
-  const file = new URL(
-    "../RunRepeat_Review_Summaries_on_Shoe_Sites.user.js",
-    import.meta.url
-  );
-  const sandbox = { module: { exports: {} } };
-  vm.runInNewContext(fs.readFileSync(file, "utf8"), sandbox);
-  return sandbox.module.exports;
-}
 
 // The product name as a shop would show it: the title minus the brand,
 // e.g. "New Balance FuelCell Rebel v5" -> "FuelCell Rebel v5".
