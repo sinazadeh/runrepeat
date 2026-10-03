@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RunRepeat Review Summaries on Shoe Sites
 // @namespace    https://github.com/sinazadeh/runrepeat
-// @version      1.3.2
+// @version      1.3.3
 // @description  Injects RunRepeat reviews onto product pages of major shoe brands.
 // @author       TheSina
 // @match        https://www.nike.com/*
@@ -216,7 +216,7 @@
       data.score > 0 &&
       el(
         "div",
-        `display:flex; align-items:center; gap:8px; background:white; padding:8px 16px; border-radius:20px; border:2px solid ${scoreColor};`,
+        `display:flex; align-items:center; gap:8px; flex-shrink:0; background:white; padding:8px 16px; border-radius:20px; border:2px solid ${scoreColor};`,
         el(
           "div",
           `font-size:24px; font-weight:bold; color:${scoreColor}; line-height:1;`,
@@ -243,21 +243,8 @@
       `border:1px solid #e0e0e0; border-radius:8px; padding:20px; margin:20px 0; background:#fdfdfd; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;`,
       el(
         "div",
-        "display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; padding-bottom:12px; border-bottom:2px solid #eee;",
-        el(
-          "div",
-          "display:flex; align-items:center; gap:12px;",
-          el(
-            "div",
-            "background:#000; color:white; padding:6px 12px; border-radius:4px; font-weight:bold; font-size:14px;",
-            "RunRepeat"
-          ),
-          el(
-            "h3",
-            `${HEADING_RESET} margin:0; font-size:20px; font-weight:600; color:#111;`,
-            "Expert Review"
-          )
-        ),
+        "display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; margin-bottom:20px; padding-bottom:12px; border-bottom:2px solid #eee;",
+        renderHeading(data.title),
         scoreBadge
       ),
       renderSubScores(data.subScores),
@@ -286,6 +273,33 @@
     );
     section.className = "runrepeat-section";
     return section;
+  }
+
+  // The shoe's name as RunRepeat titles it (so it's easy to confirm the
+  // review is for the right shoe), above "RunRepeat Expert Review".
+  function renderHeading(title) {
+    const headingStyle = `${HEADING_RESET} margin:0; font-size:20px; font-weight:600; color:#111;`;
+    return el(
+      "div",
+      "display:flex; flex-direction:column; gap:8px; min-width:0;",
+      title && el("h3", headingStyle, title),
+      el(
+        "div",
+        "display:flex; align-items:center; gap:12px; white-space:nowrap;",
+        el(
+          "div",
+          "background:#000; color:white; padding:6px 12px; border-radius:4px; font-weight:bold; font-size:14px;",
+          "RunRepeat"
+        ),
+        title
+          ? el(
+              "span",
+              "font-size:16px; font-weight:500; color:#555;",
+              "Expert Review"
+            )
+          : el("h3", headingStyle, "Expert Review")
+      )
+    );
   }
 
   // Per-use scores, e.g. "Daily running 84", "Tempo 42".

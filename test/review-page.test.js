@@ -76,6 +76,19 @@ test("pages without awards parse with an empty list", () => {
   assert.deepEqual(plain(parseFixture("brooks-launch-10").awards), []);
 });
 
+test("heads the panel with RunRepeat's name for the shoe", () => {
+  const review = parseFixture("on-cloudmonster-3");
+  const section = userscript.createRunRepeatSection(review);
+  assert.equal(section.querySelector("h3").textContent, "On Cloudmonster 3");
+  assert.match(section.textContent, /^On Cloudmonster 3RunRepeatExpert Review/);
+});
+
+test("without a title, the panel is headed 'Expert Review'", () => {
+  const review = { ...parseFixture("on-cloudmonster-3"), title: "" };
+  const section = userscript.createRunRepeatSection(review);
+  assert.equal(section.querySelector("h3").textContent, "Expert Review");
+});
+
 test("renders scores and awards, and never parses review text as HTML", () => {
   const review = parseFixture("on-cloudmonster-3");
   review.pros.push('<img src=x onerror="alert(1)">');
