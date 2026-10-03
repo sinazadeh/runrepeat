@@ -2478,7 +2478,7 @@
     "title": "New Balance FuelCell SuperComp Pacer v2"
   },
   {
-    "brand": "topo",
+    "brand": "topo-athletic",
     "name": "topo-atmos",
     "url": "https://runrepeat.com/topo-athletic-atmos",
     "title": "Topo Atmos"
@@ -2988,7 +2988,7 @@
     "title": "Hoka Challenger 7 GTX"
   },
   {
-    "brand": "topo",
+    "brand": "topo-athletic",
     "name": "topo-ultraventure-4",
     "url": "https://runrepeat.com/topo-ultraventure-4",
     "title": "Topo Ultraventure 4"
@@ -3144,7 +3144,7 @@
     "title": "Brooks Glycerin 20"
   },
   {
-    "brand": "topo",
+    "brand": "topo-athletic",
     "name": "topo-phantom-3",
     "url": "https://runrepeat.com/topo-athletic-phantom-3",
     "title": "Topo Phantom 3"
@@ -3331,7 +3331,7 @@
   },
   {
     "brand": "asics",
-    "name": "asics-metaspeed-sky",
+    "name": "asics-metaspeed-sky-plus",
     "url": "https://runrepeat.com/asics-metaspeed-sky-plus",
     "title": "ASICS Metaspeed Sky+"
   },
@@ -3511,7 +3511,7 @@
   },
   {
     "brand": "asics",
-    "name": "asics-metaspeed-edge",
+    "name": "asics-metaspeed-edge-plus",
     "url": "https://runrepeat.com/asics-metaspeed-edge-plus",
     "title": "ASICS Metaspeed Edge+"
   },
@@ -3522,7 +3522,7 @@
     "title": "Altra Paradigm 7"
   },
   {
-    "brand": "xero",
+    "brand": "xero-shoes",
     "name": "xero-shoes-prio",
     "url": "https://runrepeat.com/xero-shoes-prio",
     "title": "Xero Shoes Prio"
@@ -3564,7 +3564,7 @@
     "title": "Salomon Aero Glide 2"
   },
   {
-    "brand": "topo",
+    "brand": "topo-athletic",
     "name": "topo-traverse",
     "url": "https://runrepeat.com/topo-athletic-traverse",
     "title": "Topo Traverse"
@@ -3642,7 +3642,7 @@
     "title": "PUMA Deviate Nitro Elite"
   },
   {
-    "brand": "topo",
+    "brand": "topo-athletic",
     "name": "topo-mtn-racer-3",
     "url": "https://runrepeat.com/topo-athletic-mtn-racer-3",
     "title": "Topo MTN Racer 3"
@@ -3780,7 +3780,7 @@
     "title": "New Balance DynaSoft Nitrel v5"
   },
   {
-    "brand": "topo",
+    "brand": "topo-athletic",
     "name": "topo-cyclone-2",
     "url": "https://runrepeat.com/topo-athletic-cyclone-2",
     "title": "Topo Cyclone 2"
@@ -3918,7 +3918,7 @@
     "title": "Allbirds Tree Dasher 2"
   },
   {
-    "brand": "xero",
+    "brand": "xero-shoes",
     "name": "xero-shoes-hfs-ii",
     "url": "https://runrepeat.com/xero-shoes-hfs-ii",
     "title": "Xero Shoes HFS II"
@@ -4194,7 +4194,7 @@
     "title": "Nike ZoomX Invincible Run Flyknit 2"
   },
   {
-    "brand": "xero",
+    "brand": "xero-shoes",
     "name": "xero-shoes-scrambler-low",
     "url": "https://runrepeat.com/xero-shoes-scrambler-low",
     "title": "Xero Shoes Scrambler Low"
@@ -4255,7 +4255,7 @@
   },
   {
     "brand": "adidas",
-    "name": "adidas-alphabounce",
+    "name": "adidas-alphabounce-plus",
     "url": "https://runrepeat.com/adidas-alpha-bounce",
     "title": "Adidas Alphabounce+"
   },
@@ -4284,7 +4284,7 @@
     "title": "ASICS GlideRide 3"
   },
   {
-    "brand": "topo",
+    "brand": "topo-athletic",
     "name": "topo-ultraventure-3",
     "url": "https://runrepeat.com/topo-athletic-ultraventure-3",
     "title": "Topo Ultraventure 3"
@@ -4470,7 +4470,7 @@
     "title": "ASICS Dynablast 3"
   },
   {
-    "brand": "xero",
+    "brand": "xero-shoes",
     "name": "xero-shoes-speed-force-ii",
     "url": "https://runrepeat.com/xero-shoes-speed-force-ii",
     "title": "Xero Shoes Speed Force II"
@@ -4525,7 +4525,7 @@
   },
   {
     "brand": "adidas",
-    "name": "adidas-supernova",
+    "name": "adidas-supernova-plus",
     "url": "https://runrepeat.com/adidas-supernova-plus",
     "title": "Adidas Supernova+"
   },
@@ -4548,7 +4548,7 @@
     "title": "Altra Rivera 3"
   },
   {
-    "brand": "xero",
+    "brand": "xero-shoes",
     "name": "xero-shoes-mesa-trail-wp",
     "url": "https://runrepeat.com/xero-shoes-mesa-trail-wp",
     "title": "Xero Shoes Mesa Trail WP"
@@ -4939,7 +4939,7 @@
   },
   {
     "brand": "saucony",
-    "name": "saucony-endorphin-pro",
+    "name": "saucony-endorphin-pro-plus",
     "url": "https://runrepeat.com/saucony-endorphin-pro-plus",
     "title": "Saucony Endorphin Pro+"
   },
@@ -5305,7 +5305,7 @@
   },
   {
     "brand": "nike",
-    "name": "nike-acg-watercat",
+    "name": "nike-acg-watercat-plus",
     "url": "https://runrepeat.com/nike-acg-watercat",
     "title": "Nike ACG Watercat+"
   },
