@@ -541,12 +541,6 @@
   },
   {
     "brand": "adidas",
-    "name": "adidas-supernova-prima-3",
-    "url": "https://runrepeat.com/adidas-supernova-prima-3",
-    "title": "adidas Supernova Prima 3"
-  },
-  {
-    "brand": "adidas",
     "name": "adidas-supernova-rise",
     "url": "https://runrepeat.com/adidas-supernova-rise",
     "title": "adidas Supernova Rise"
@@ -610,6 +604,12 @@
     "name": "adidas-terrex-agravic-speed",
     "url": "https://runrepeat.com/adidas-terrex-agravic-speed",
     "title": "adidas Terrex Agravic Speed"
+  },
+  {
+    "brand": "adidas",
+    "name": "adidas-terrex-agravic-speed-ultra",
+    "url": "https://runrepeat.com/adidas-terrex-agravic-speed-ultra",
+    "title": "adidas Terrex Agravic Speed Ultra"
   },
   {
     "brand": "adidas",
@@ -745,15 +745,15 @@
   },
   {
     "brand": "air-jordan",
-    "name": "air-jordan-1-low",
-    "url": "https://runrepeat.com/air-jordan-1-low",
-    "title": "Air Jordan 1 Low"
-  },
-  {
-    "brand": "air-jordan",
     "name": "air-jordan-1-mid",
     "url": "https://runrepeat.com/air-jordan-1-mid",
     "title": "Air Jordan 1 Mid"
+  },
+  {
+    "brand": "air-jordan",
+    "name": "air-jordan-4-retro",
+    "url": "https://runrepeat.com/air-jordan-4-retro",
+    "title": "Air Jordan 4 Retro"
   },
   {
     "brand": "air-jordan",
@@ -868,6 +868,12 @@
     "name": "altra-experience-wild-2",
     "url": "https://runrepeat.com/altra-experience-wild-2",
     "title": "Altra Experience Wild 2"
+  },
+  {
+    "brand": "altra",
+    "name": "altra-fwd-via",
+    "url": "https://runrepeat.com/altra-fwd-via",
+    "title": "Altra FWD VIA"
   },
   {
     "brand": "altra",
@@ -1171,6 +1177,12 @@
   },
   {
     "brand": "asics",
+    "name": "asics-gel-excite-9",
+    "url": "https://runrepeat.com/asics-gel-excite-9",
+    "title": "ASICS Gel Excite 9"
+  },
+  {
+    "brand": "asics",
     "name": "asics-gel-excite-trail-2",
     "url": "https://runrepeat.com/asics-gel-excite-trail-2",
     "title": "ASICS Gel Excite Trail 2"
@@ -1408,6 +1420,12 @@
     "name": "asics-gt-2160",
     "url": "https://runrepeat.com/asics-gt-2160",
     "title": "ASICS GT 2160"
+  },
+  {
+    "brand": "asics",
+    "name": "asics-jolt-4",
+    "url": "https://runrepeat.com/asics-jolt-4",
+    "title": "ASICS Jolt 4"
   },
   {
     "brand": "asics",
@@ -1819,12 +1837,6 @@
   },
   {
     "brand": "brooks",
-    "name": "brooks-glycerin-22",
-    "url": "https://runrepeat.com/brooks-glycerin-22",
-    "title": "Brooks Glycerin 22"
-  },
-  {
-    "brand": "brooks",
     "name": "brooks-glycerin-23",
     "url": "https://runrepeat.com/brooks-glycerin-23",
     "title": "Brooks Glycerin 23"
@@ -1906,6 +1918,18 @@
     "name": "brooks-hyperion-elite-5",
     "url": "https://runrepeat.com/brooks-hyperion-elite-5",
     "title": "Brooks Hyperion Elite 5"
+  },
+  {
+    "brand": "brooks",
+    "name": "brooks-hyperion-elite-6",
+    "url": "https://runrepeat.com/brooks-hyperion-elite-6",
+    "title": "Brooks Hyperion Elite 6"
+  },
+  {
+    "brand": "brooks",
+    "name": "brooks-hyperion-gts-2",
+    "url": "https://runrepeat.com/brooks-hyperion-gts-2",
+    "title": "Brooks Hyperion GTS 2"
   },
   {
     "brand": "brooks",
@@ -2098,6 +2122,12 @@
     "name": "darimati-br-001",
     "url": "https://runrepeat.com/darimati-br-001",
     "title": "Darimati BR-001"
+  },
+  {
+    "brand": "dc",
+    "name": "dc-court-graffik",
+    "url": "https://runrepeat.com/dc-court-graffik",
+    "title": "DC Court Graffik"
   },
   {
     "brand": "diadora",
@@ -2422,6 +2452,12 @@
     "name": "hoka-rocket-x-3",
     "url": "https://runrepeat.com/hoka-rocket-x-3",
     "title": "HOKA Rocket X 3"
+  },
+  {
+    "brand": "hoka",
+    "name": "hoka-rocket-x-trail",
+    "url": "https://runrepeat.com/hoka-rocket-x-trail",
+    "title": "HOKA Rocket X Trail"
   },
   {
     "brand": "hoka",
@@ -2839,6 +2875,12 @@
   },
   {
     "brand": "la-sportiva",
+    "name": "la-sportiva-prodigio-2",
+    "url": "https://runrepeat.com/la-sportiva-prodigio-2",
+    "title": "La Sportiva Prodigio 2"
+  },
+  {
+    "brand": "la-sportiva",
     "name": "la-sportiva-prodigio-max",
     "url": "https://runrepeat.com/la-sportiva-prodigio-max",
     "title": "La Sportiva Prodigio Max"
@@ -3208,12 +3250,6 @@
     "name": "mizuno-wave-sky-9",
     "url": "https://runrepeat.com/mizuno-wave-sky-9",
     "title": "Mizuno Wave Sky 9"
-  },
-  {
-    "brand": "mount",
-    "name": "mount-to-coast-c1",
-    "url": "https://runrepeat.com/mount-to-coast-c-1",
-    "title": "Mount to Coast C1"
   },
   {
     "brand": "mount",
@@ -4177,6 +4213,12 @@
   },
   {
     "brand": "nike",
+    "name": "nike-journey-run",
+    "url": "https://runrepeat.com/nike-journey-run",
+    "title": "Nike Journey Run"
+  },
+  {
+    "brand": "nike",
     "name": "nike-juniper-trail",
     "url": "https://runrepeat.com/nike-juniper-trail",
     "title": "Nike Juniper Trail"
@@ -4245,7 +4287,7 @@
     "brand": "nike",
     "name": "nike-lebron-20",
     "url": "https://runrepeat.com/nike-lebron-20",
-    "title": "Nike Lebron 20"
+    "title": "Nike LeBron 20"
   },
   {
     "brand": "nike",
@@ -4257,13 +4299,13 @@
     "brand": "nike",
     "name": "nike-lebron-nxxt-gen",
     "url": "https://runrepeat.com/nike-lebron-nxxt-gen",
-    "title": "Nike Lebron NXXT GEN"
+    "title": "Nike LeBron NXXT Gen"
   },
   {
     "brand": "nike",
     "name": "nike-lebron-witness-7",
     "url": "https://runrepeat.com/nike-lebron-witness-7",
-    "title": "Nike Lebron Witness 7"
+    "title": "Nike LeBron Witness 7"
   },
   {
     "brand": "nike",
@@ -4348,6 +4390,12 @@
     "name": "nike-pegasus-plus",
     "url": "https://runrepeat.com/nike-pegasus-plus",
     "title": "Nike Pegasus Plus"
+  },
+  {
+    "brand": "nike",
+    "name": "nike-pegasus-plus-2",
+    "url": "https://runrepeat.com/nike-pegasus-plus-2",
+    "title": "Nike Pegasus Plus 2"
   },
   {
     "brand": "nike",
@@ -4612,12 +4660,6 @@
     "name": "nike-wildhorse-8",
     "url": "https://runrepeat.com/nike-wildhorse-8",
     "title": "Nike Wildhorse 8"
-  },
-  {
-    "brand": "nike",
-    "name": "nike-winflo-10",
-    "url": "https://runrepeat.com/nike-winflo-10",
-    "title": "Nike Winflo 10"
   },
   {
     "brand": "nike",
@@ -5254,6 +5296,12 @@
     "name": "puma-rs-x",
     "url": "https://runrepeat.com/puma-rs-x",
     "title": "PUMA RS-X"
+  },
+  {
+    "brand": "puma",
+    "name": "puma-speedcat-og",
+    "url": "https://runrepeat.com/puma-speedcat-og",
+    "title": "PUMA Speedcat OG"
   },
   {
     "brand": "puma",
