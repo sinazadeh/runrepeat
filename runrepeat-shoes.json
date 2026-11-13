@@ -109,6 +109,12 @@
   },
   {
     "brand": "adidas",
+    "name": "adidas-adizero-prime-sp-4",
+    "url": "https://runrepeat.com/adidas-adizero-prime-sp-4",
+    "title": "adidas Adizero Prime SP 4"
+  },
+  {
+    "brand": "adidas",
     "name": "adidas-adizero-prime-x-2-strung",
     "url": "https://runrepeat.com/adidas-adizero-prime-x-2-strung",
     "title": "adidas Adizero Prime X 2 Strung"
@@ -466,6 +472,12 @@
     "name": "adidas-response-2",
     "url": "https://runrepeat.com/adidas-response-2",
     "title": "adidas Response 2"
+  },
+  {
+    "brand": "adidas",
+    "name": "adidas-runfalcon",
+    "url": "https://runrepeat.com/adidas-runfalcon",
+    "title": "adidas Runfalcon"
   },
   {
     "brand": "adidas",
@@ -1728,6 +1740,12 @@
     "title": "Babolat Jet Mach 4"
   },
   {
+    "brand": "babolat",
+    "name": "babolat-sfx-4",
+    "url": "https://runrepeat.com/babolat-sfx-4",
+    "title": "Babolat SFX 4"
+  },
+  {
     "brand": "brooks",
     "name": "brooks-addiction-gts-15",
     "url": "https://runrepeat.com/brooks-addiction-gts-15",
@@ -1744,12 +1762,6 @@
     "name": "brooks-adrenaline-gts-23",
     "url": "https://runrepeat.com/brooks-adrenaline-gts-23",
     "title": "Brooks Adrenaline GTS 23"
-  },
-  {
-    "brand": "brooks",
-    "name": "brooks-adrenaline-gts-24",
-    "url": "https://runrepeat.com/brooks-adrenaline-gts-24",
-    "title": "Brooks Adrenaline GTS 24"
   },
   {
     "brand": "brooks",
@@ -2086,6 +2098,12 @@
     "name": "brooks-revel-max",
     "url": "https://runrepeat.com/brooks-revel-max",
     "title": "Brooks Revel Max"
+  },
+  {
+    "brand": "brooks",
+    "name": "brooks-trace-3",
+    "url": "https://runrepeat.com/brooks-trace-3",
+    "title": "Brooks Trace 3"
   },
   {
     "brand": "chaco",
@@ -2449,6 +2467,12 @@
   },
   {
     "brand": "hoka",
+    "name": "hoka-mach-6",
+    "url": "https://runrepeat.com/hoka-mach-6",
+    "title": "HOKA Mach 6"
+  },
+  {
+    "brand": "hoka",
     "name": "hoka-mach-7",
     "url": "https://runrepeat.com/hoka-mach-7",
     "title": "HOKA Mach 7"
@@ -2590,6 +2614,12 @@
     "name": "hoka-speedgoat-7",
     "url": "https://runrepeat.com/hoka-speedgoat-7",
     "title": "HOKA Speedgoat 7"
+  },
+  {
+    "brand": "hoka",
+    "name": "hoka-stinson-7",
+    "url": "https://runrepeat.com/hoka-stinson-7",
+    "title": "HOKA Stinson 7"
   },
   {
     "brand": "hoka",
@@ -2818,6 +2848,12 @@
     "name": "kailas-fuga-ex-3",
     "url": "https://runrepeat.com/kailas-fuga-ex-3",
     "title": "Kailas FUGA EX 3"
+  },
+  {
+    "brand": "kailas",
+    "name": "kailas-fuga-ex-330",
+    "url": "https://runrepeat.com/kailas-fuga-ex-330",
+    "title": "Kailas FUGA EX 330"
   },
   {
     "brand": "kailas",
@@ -3913,6 +3949,12 @@
   },
   {
     "brand": "nike",
+    "name": "nike-acg-zegama-hike",
+    "url": "https://runrepeat.com/nike-acg-zegama-hike",
+    "title": "Nike ACG Zegama Hike"
+  },
+  {
+    "brand": "nike",
     "name": "nike-acg-zegama-trail",
     "url": "https://runrepeat.com/nike-acg-zegama-trail",
     "title": "Nike ACG Zegama Trail"
@@ -4060,6 +4102,12 @@
     "name": "nike-alphafly-3",
     "url": "https://runrepeat.com/nike-alphafly-3",
     "title": "Nike Alphafly 3"
+  },
+  {
+    "brand": "nike",
+    "name": "nike-alphafly-4",
+    "url": "https://runrepeat.com/nike-alphafly-4",
+    "title": "Nike Alphafly 4"
   },
   {
     "brand": "nike",
@@ -5197,6 +5245,12 @@
   },
   {
     "brand": "on",
+    "name": "on-cloudsurfer-3",
+    "url": "https://runrepeat.com/on-cloudsurfer-3",
+    "title": "On Cloudsurfer 3"
+  },
+  {
+    "brand": "on",
     "name": "on-cloudsurfer-7",
     "url": "https://runrepeat.com/on-cloudsurfer-7",
     "title": "On Cloudsurfer 7"
@@ -6073,12 +6127,6 @@
   },
   {
     "brand": "saucony",
-    "name": "saucony-ride-19",
-    "url": "https://runrepeat.com/saucony-ride-19",
-    "title": "Saucony Ride 19"
-  },
-  {
-    "brand": "saucony",
     "name": "saucony-sinister",
     "url": "https://runrepeat.com/saucony-sinister",
     "title": "Saucony Sinister"
@@ -6558,6 +6606,12 @@
     "title": "Vivobarefoot Primus Trail III All Weather FG"
   },
   {
+    "brand": "walmart",
+    "name": "walmart-athletic-works-core-jogger-2-0",
+    "url": "https://runrepeat.com/walmart-athletic-works-core-jogger-2-0",
+    "title": "Walmart Athletic Works Core Jogger 2.0"
+  },
+  {
     "brand": "wilson",
     "name": "wilson-rush-pro-4-0",
     "url": "https://runrepeat.com/wilson-rush-pro-4-0",
@@ -6568,6 +6622,12 @@
     "name": "wilson-rush-pro-ace",
     "url": "https://runrepeat.com/wilson-rush-pro-ace",
     "title": "Wilson Rush Pro Ace"
+  },
+  {
+    "brand": "wilson",
+    "name": "wilson-rush-tour-5",
+    "url": "https://runrepeat.com/wilson-rush-tour-5",
+    "title": "Wilson Rush Tour 5"
   },
   {
     "brand": "xero-shoes",
