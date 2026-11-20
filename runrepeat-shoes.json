@@ -1219,12 +1219,6 @@
   },
   {
     "brand": "asics",
-    "name": "asics-gel-cumulus-27",
-    "url": "https://runrepeat.com/asics-gel-cumulus-27",
-    "title": "ASICS Gel Cumulus 27"
-  },
-  {
-    "brand": "asics",
     "name": "asics-gel-cumulus-28",
     "url": "https://runrepeat.com/asics-gel-cumulus-28",
     "title": "ASICS Gel Cumulus 28"
@@ -1561,12 +1555,6 @@
   },
   {
     "brand": "asics",
-    "name": "asics-metaspeed-sky-plus",
-    "url": "https://runrepeat.com/asics-metaspeed-sky-plus",
-    "title": "ASICS Metaspeed Sky+"
-  },
-  {
-    "brand": "asics",
     "name": "asics-metaspeed-sky-tokyo",
     "url": "https://runrepeat.com/asics-metaspeed-sky-tokyo",
     "title": "ASICS Metaspeed Sky Tokyo"
@@ -1762,6 +1750,12 @@
     "name": "brooks-adrenaline-gts-23",
     "url": "https://runrepeat.com/brooks-adrenaline-gts-23",
     "title": "Brooks Adrenaline GTS 23"
+  },
+  {
+    "brand": "brooks",
+    "name": "brooks-adrenaline-gts-24",
+    "url": "https://runrepeat.com/brooks-adrenaline-gts-24",
+    "title": "Brooks Adrenaline GTS 24"
   },
   {
     "brand": "brooks",
@@ -4993,24 +4987,6 @@
   },
   {
     "brand": "nobull",
-    "name": "nobull-allday-knit",
-    "url": "https://runrepeat.com/nobull-allday-knit",
-    "title": "NOBULL Allday Knit"
-  },
-  {
-    "brand": "nobull",
-    "name": "nobull-allday-ripstop",
-    "url": "https://runrepeat.com/nobull-allday-ripstop",
-    "title": "NOBULL Allday Ripstop"
-  },
-  {
-    "brand": "nobull",
-    "name": "nobull-drive-ripstop",
-    "url": "https://runrepeat.com/nobull-drive-ripstop",
-    "title": "NOBULL Drive Ripstop"
-  },
-  {
-    "brand": "nobull",
     "name": "nobull-outwork",
     "url": "https://runrepeat.com/nobull-outwork",
     "title": "NOBULL Outwork"
@@ -6127,6 +6103,12 @@
   },
   {
     "brand": "saucony",
+    "name": "saucony-ride-19",
+    "url": "https://runrepeat.com/saucony-ride-19",
+    "title": "Saucony Ride 19"
+  },
+  {
+    "brand": "saucony",
     "name": "saucony-sinister",
     "url": "https://runrepeat.com/saucony-sinister",
     "title": "Saucony Sinister"
@@ -6220,6 +6202,12 @@
     "name": "skechers-aero-burst",
     "url": "https://runrepeat.com/skechers-aero-burst",
     "title": "Skechers Aero Burst"
+  },
+  {
+    "brand": "skechers",
+    "name": "skechers-aero-elite",
+    "url": "https://runrepeat.com/skechers-aero-elite",
+    "title": "Skechers Aero Elite"
   },
   {
     "brand": "skechers",
